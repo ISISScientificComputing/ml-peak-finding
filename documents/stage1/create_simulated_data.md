@@ -13,3 +13,11 @@ One initial pseudo-code suggestion for how to do this:
     
 A question is how close to real data does the simulated data needs to be? I practice we 
 should be able to get very close, but say ~80% may be close enough. 
+
+Questions to Pascal
+-------------------
+
+* What do you know about the samples before the experiment? And what new structural info. do you typically gain?
+* How do deal with sample resolution and instrument resolution, and in 3D? Are instrument resolution measured separately?
+* Why is sample environment artifacts not substracted from the raw data?
+* How many different sample environment setups do you have?
