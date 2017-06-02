@@ -55,7 +55,7 @@
 }
 \author{
 		\normalfont 								\normalsize
-        Samuel Jackson, Michael Hart, and \& Anders Markvardsen \\[-3pt]		\normalsize
+        Samuel Jackson, Michael Hart, and Anders Markvardsen \\[-3pt]		\normalsize
         \today
 }
 \date{}
@@ -116,7 +116,14 @@ separate peaks.
 
 Despite these complications, a human expert can easily visually identify peaks
 in the pattern, providing motivation that machine learning techniques may have
-more success where the existing approach fails.
+more success where the existing approach fails. 
+
+An early task in this project will likely be to examine how, if possible, we can 
+model the noise generated from the sample environment. Reliably being able to
+model this noise could be an advantagous preprocessing step that
+drastically simplify the problem of peak identification
+and will almost certainly be needed for the generation of synthetic datasets (
+see section \ref{sec:data}).
 
 \section{Automated Solutions} 
 Ideally the process of identifying single crystal peaks should be as automated 
@@ -137,7 +144,9 @@ predicted results and use this to improve successful detection.
 
 The following sections outline two approaches that could be taken as 
 starting points to develop a machine learning solution to the problem in the 
-previous section.
+previous section. Both of these starting points are deliberately left loosely
+defined. These are only suggestions of where to begin and will likely be
+adapted and experimented with as the project progresses.
 
 \subsection{Hand crafted features Approach}
 One approach would be to use hand crafted features based on tried and tested
@@ -149,7 +158,9 @@ features based on these ROIs, such as shape, intensity, or texture based metrics
 can then be used to train a binary classification model. This could be any one of the 
 commonly used models in machine learning such as a SVM or Random Forest. In fact 
 it would be best to train a number of models on the same features and 
-compare their performance. Classifiers such as these can easily be modified to 
+compare their performance. 
+
+Classifiers such as these can easily be modified to 
 give a confidence estimate on the predicted class. New images could then be 
 shown to the trained system, the ROIs \& features calculated, and the ROIs with 
 similar metrics would be predicted as containing a peak (or not).
@@ -174,6 +185,13 @@ is in an image is a computationally intensive problem, but recent work in the
 neural network community has produced some effcient solutions to mutliclass object detection problems
 based on regression networks \cite{sermanet2013overfeat} and region proposal 
 networks \cite{kiapour2014materials}, \cite{girshick2014rich}, \cite{renNIPS15fasterrcnn}.
+
+One potential solution would be to have two neural networks in a pipeline. One 
+network trained to propose regions of interest, either outputting coordinates of
+a bounding box or outputing scores for individual pixels. A second network or
+even another type of classifier could then be used with the generated ROIs as input.
+The output of this second network would then be a classification of where the ROI
+does or does not contain a peak.
 
 \section{Datasets \& Representation}
 \label{sec:data}
@@ -203,8 +221,9 @@ which could possibly be used, but the extent and detail of the data is currenty 
 This lack of data is a major sticking point for a machine 
 learning approach. A good volume of diverse, labelled diffraction data is 
 necessary for supervised learning methods. This is where being able to 
-continuously learn from user input is likely to be useful. 
-
+continuously learn from user input is likely to be useful. Existing labelled data could
+be supplemented by transforming it in some way to produce ``new'' examples. For example,
+taking a ROI with a single peak in it and rotating it by 90 degrees.
 
 \begin{figure}[H]
 \centering
@@ -223,7 +242,9 @@ know crystal lattices, instrument resolution, and a UB matrix. Another option is
 to use of software such as McStas 
 \cite{McStas} or MCViNE \cite{MCViNE} could be used as starting points for 
 generating datasets. How accurately simulated data would match features of real 
-data has yet to be determined.
+data has yet to be determined. The key question here is that simulated data must be 
+accurate enough to real data and also as varied as the real data in order to avoid
+overfitting to the simulated data.
 
 Another issue is that both the exisiting technique and the proposed versions above are 
 limited as they can only incorporate visual data. More advanced 
@@ -273,21 +294,12 @@ with similar challenges in the image processing \& machine learning communities
 we feel that such a system would be feasible to build and could provide 
 superior performance to the existing method. 
 
-Based on the initial analysis of the problem we feel that the best option of the
-two presented would be to use hand crafted features based on image 
-processing techniques and a simple classification/regression learner. This has 
-several advantages over the neural network option:
-
-\begin{itemize}
-    \item Implementation will likely be simpler, particularly with regard to peak localisation.
-    \item Training will likely require less data.
-    \item Single crystal peaks are relatively simple in apperance. A neural network would most likely be overkill for this specific problem.
-\end{itemize}
-
 However, it is worth emphasising that building such a system would not be without 
 challenges. The major hurdles which we feel must be overcome are obtaining/creating 
 enough labelled data for training and the computational expense of preprocessing 
-WISH data to Q space during the training stage. 
+WISH data to Q space during the training stage. From there we feel that a diverse
+number of approaches should be considered and trialed to get best understanding
+of methods which work best with the data at hand.
 
 Based on an initial analysis of this problem we feel that the next steps towards 
 building an automated peak finding system in order of importance would be:
@@ -306,11 +318,11 @@ building an automated peak finding system in order of importance would be:
     This gives us a known baseline which we can use to measure the performance of subsequent
     prototypes against.
 
-\item Develop a simple prototype system based on finding regions of interest in 
-    slices from the q-space volume along a given axis and classifying regions as
-    being a peak or not. At this point we would need to evaluate performance against
-    the baseline. The prototype could then be improved and more complicated
-    options explored based on performance against the baseline.
+\item Begin to develop simple prototypes of the system using as much ``out of the box'' software
+    as possible. Trying many different types of technqiues will allow us to compare and contrast
+    each approach and hopefully allow us to identify the most feasible approaches as quickly as
+    posible. Using existing software will aid how quickly we can test candidate solutions
+    while adding reassurance of the correctness of the implementations used.
 
 \end{itemize}
 
