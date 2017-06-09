@@ -1,5 +1,5 @@
 Installing Docker on Autoreduction Machine
-------------------------------------------
+==========================================
 
 This sections details the steps taken to install docker on the autoreduction
 machine.
@@ -24,7 +24,7 @@ The last line is just for verifying.
 
 
 Changing Location of Docker Image Repo
---------------------------------------
+======================================
 
 By default, Docker stores its image repository, along with all built and
 downloaded images and all container filesystems, in `/var/lib/docker`.

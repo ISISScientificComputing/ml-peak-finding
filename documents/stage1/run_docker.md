@@ -1,5 +1,5 @@
 Running Persistent Container
-----------------------------
+============================
 
 We need to use and share a single container between different users. We also
 need to make available, inside the container, some files from outside of the
@@ -22,7 +22,7 @@ This breaks down as follows:
 
 
 List Available Containers
-=========================
+-------------------------
 
 You can check the names or statuses of available containers:
 ```
@@ -33,7 +33,7 @@ c71604cc0d3f        mlpeaks             "/bin/bash"         17 minutes ago      
 
 
 Exec into Running Container
-===========================
+---------------------------
 
 Generally, to use a shared container, you will want to execute a new shell
 inside of it, like this:
@@ -59,7 +59,7 @@ Exiting only shuts down the current process, the container continues to run.
 
 
 Attaching to the Primary Shell
-==============================
+------------------------------
 
 You may have noticed a `/bin/bash` process with PID 1 above. This is the main
 container process. Usually this is not needed, but you can attach to it like
@@ -76,7 +76,7 @@ then `q`.
 
 
 Restarting a Stopped Container
-==============================
+------------------------------
 
 A running container can be stopped by exiting the primary process, as shown
 above, or by running:
