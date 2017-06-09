@@ -10,7 +10,7 @@ Most documentation available, for installing Docker on RHEL, described how to
 install `docker-ee`. However, this is the Enterprise Edition and requires
 purchasing a special license.
 
-Instead, the following steps can be used to instal the community edition, 
+Instead, the following steps can be used to install the community edition, 
 `docker-ce`, from the CentOS repositories.
 
 ```
@@ -20,7 +20,7 @@ $ sudo yum install docker-ce
 $ sudo systemctl start docker
 $ sudo docker run hello-world
 ```
-The last step is just for verifying.
+The last line is just for verifying.
 
 
 Changing Location of Docker Image Repo
@@ -51,5 +51,5 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl restart docker
 $ sudo docker info | grep -i 'root dir'
 ```
-The last step is just for verifying.
+The last line is just for verifying.
 
