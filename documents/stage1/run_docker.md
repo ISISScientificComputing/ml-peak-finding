@@ -21,10 +21,10 @@ This breaks down as follows:
 - The image being launched is called `mlpeaks`
 
 
-List Running Containers
-=======================
+List Available Containers
+=========================
 
-You can check the names or statuses of currently running containers:
+You can check the names or statuses of available containers:
 ```
 $ sudo docker ps -a
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
@@ -67,9 +67,36 @@ this:
 
 ```
 $ sudo docker attach peakstest
+root@c71604cc0d3f:/# 
 ```
 If you exit now, this will shut down the container and all of its processes.
 
 If you want to detach again without shutting down, hold `CTRL` and press `p`,
 then `q`.
 
+
+Restarting a Stopped Container
+==============================
+
+A running container can be stopped by exiting the primary process, as shown
+above, or by running:
+```
+$ sudo docker stop peakstest
+$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
+c71604cc0d3f        mlpeaks             "/bin/bash"         3 hours ago         Exited (0) 12 seconds ago                       peakstest
+```
+It might also be stopped by the machine restarting or crashing.
+
+You could start a new instance by following the instructions of the first
+section of this document, but then everything done inside the container would
+be reset (except what was saved to the mounted volume).
+
+If you want to restart the same container, and restore the previous state, you
+can do this by running the following command:
+```
+$ sudo docker start peakstest
+$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+c71604cc0d3f        mlpeaks             "/bin/bash"         3 hours ago         Up 20 seconds                           peakstest
+```
