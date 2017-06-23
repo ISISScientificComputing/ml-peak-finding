@@ -1,15 +1,13 @@
-import math
 import numpy as np
-import itertools
+import scipy.ndimage as ndimage
 import os.path
-import sys
 
-from mantid.api import Projection
+from mantid.simpleapi import *
 from mantid.geometry import CrystalStructure, ReflectionGenerator, OrientedLattice
 
 params = {
     "instrument_name": "SXD",
-    "wavelength_range": (.5, 10),
+    "wavelength_range": (.5, 10.),
     "md_extents": [-17,17,-7,17,0,33],
     "mask_binning": 'SXD23767.raw',
     "mask_workspace":  "mask",
@@ -17,12 +15,12 @@ params = {
     "temperature": 50,
     "background_alpha": 0.3e-3,
     "output_directory": "/Users/samueljackson/simulation",
-    "file_prefix": "SXD_"
+    "file_prefix": "SXD"
 }
 
 cif_files = [
     '/Users/samueljackson/Downloads/1000041.cif',
-    '/Users/samueljackson/Downloads/9011998.cif'
+#    '/Users/samueljackson/Downloads/9011998.cif'
 ]
 
 def create_mask_workspace(instrument_name, binning_file, mask_workspace, nbins):
@@ -75,12 +73,12 @@ def generate_peaks(hkls, fs, extents, nbins, UB):
         index += sample_size
 
     total_signal, _ = np.histogramdd(values, bins = bins)
-    total_signal *= 100
+    total_signal *= 100 # arbitrary scale factor approximate neutron counts
     return total_signal, bins
 
 def generate_background(bins, T, alpha, nbins):
     print "Generating Background noise"
-    background = np.random.normal(100, 50, size=(nbins, nbins, nbins))
+    background = np.random.normal(5.0, 3., size=(nbins, nbins, nbins))
     
     # weight background by Debye-Waller factor
     xv, yv, zv = np.meshgrid(bins[1][:-1], bins[2][:-1], bins[0][:-1] )
@@ -89,13 +87,15 @@ def generate_background(bins, T, alpha, nbins):
     background *= weights
     return background
     
-def create_peaks_workspace(mask_data, hkls, UB):
+def create_peaks_workspace(mask_data, hkls, UB, bins):
     qs = np.array([np.dot(UB, hkl) * (2.0 * np.pi) for hkl in hkls])
     h_idx = np.digitize(qs[:, 0], bins[0])
     k_idx = np.digitize(qs[:, 1], bins[1])
     l_idx = np.digitize(qs[:, 2], bins[2])
 
-    peak_locations = mask_data[h_idx, k_idx, l_idx] != 0.0
+    # dilate to catch all peaks
+    m = ndimage.morphology.binary_dilation(mask_data).astype(mask_data.dtype)
+    peak_locations = m[h_idx, k_idx, l_idx] != 0.0
     hkl_peaks = np.array(hkls)[peak_locations]
 
     peaks = CreatePeaksWorkspace(inst_ws, 0)
@@ -125,7 +125,7 @@ for i, cif_file in enumerate(cif_files):
     mask_data = mask.getSignalArray()
     total_signal[mask_data == 0.0] = 0.0
 
-    peaks = create_peaks_workspace(mask_data, hkls, UB)
+    peaks = create_peaks_workspace(mask_data, hkls, UB, bins)
 
     ws = CreateMDWorkspace(3, Extents=params['md_extents'], Names='Q_lab_x, Q_lab_y, Q_lab_z', Units='A^-1, A^-1, A^-1')
     ws = BinMD(ws, AxisAligned=False, Parallel=True, BasisVector1='Q_lab_x, A^-1, 1,0,0', BasisVector2='Q_lab_y, A^-1, 0,1,0', BasisVector3='Q_lab_z, A^-1, 0,0,1', 
@@ -137,8 +137,8 @@ for i, cif_file in enumerate(cif_files):
     SaveNexus(peaks, file_prefix+"_peaks.nxs")
     SaveIsawUB(peaks, file_prefix + "_UB.mat")
     
-    DeleteWorkspace(inst_ws)
-    DeleteWorkspace(peaks)
-    DeleteWorkspace(ws)
+    #DeleteWorkspace(inst_ws)
+    #DeleteWorkspace(peaks)
+    #DeleteWorkspace(ws)
     
 DeleteWorkspace(mask)
