@@ -12,25 +12,24 @@ Overview of Methodology
 =======================
 
 The high level process of generating simulated diffraction data is as follows:
-    - First a 3D binary mask is generated from an example instrument file with
-    the same binning in time of flight as the simulated output should have.
+- First a 3D binary mask is generated from an example instrument file with the
+same binning in time of flight as the simulated output should have.
 
-    - Using a CIF file the positions in Q space and structure factors for peaks
-    falling within a given wavelength range are generated. Peaks are currenlty
-    approximated using a uniform Gaussian distribution.
+- Using a CIF file the positions in Q space and structure factors for peaks
+falling within a given wavelength range are generated. Peaks are currenlty
+approximated using a uniform Gaussian distribution.
 
-    - A background is then added to the data. The number of counts at a
-    particular position in the background is approximated as a Gaussian variable
-    where the mean is the average background value. A Debye-Waller term
-    governing temperature is also added. The temperature and alpha terms are
-    simualtion parameters.
+- A background is then added to the data. The number of counts at a particular
+position in the background is approximated as a Gaussian variable where the
+mean is the average background value. A Debye-Waller term governing temperature
+is also added. The temperature and alpha terms are simualtion parameters.
 
-    - Now the binary mask is used to remove all generated data which does not
-    fall in view of the instrument. This is simply done by zeroing out
-    everything outside the mask.
+- Now the binary mask is used to remove all generated data which does not fall
+in view of the instrument. This is simply done by zeroing out everything
+outside the mask.
 
-    - Predicted peaks which fall outside of the mask are removed from the list
-    as these are not visible in the generated data.
+- Predicted peaks which fall outside of the mask are removed from the list as
+these are not visible in the generated data.
 
 
 Running the Tool
