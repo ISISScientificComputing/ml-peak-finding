@@ -68,10 +68,10 @@ desired Q space binning is the same.
 
 To create a mask you need to run the `mask` command and supply an example data
 file from the instrument.  You will also need to supply a name for the
-generated mask file.
+generated mask file. Finally you need to supply a config file.
 
 ```bash
-python scd-sim mask -i SXD23767.raw -o mask
+python scd-sim mask -i SXD23767.raw -o sxdmask -c config.json
 ```
 
 ### Creating Simulated Data
@@ -80,10 +80,10 @@ Now simulated data can be created by running the `create` command. The `-i`
 command can take 1 or more `.cif` files. A simulated workspace for each file
 will be created.  The `-o` flag specifies an output directory to store the
 resulting files in. The `-m` flag takes the program which mask file to use (see 
-the previous step).
+the previous step). The `-c` flag tells the program which config file to use.
 
 ```bash
-python scd-sim create -i nacl.cif -o ~/simulation -m mask.npy
+python scd-sim create -i nacl.cif -o ~/simulation -m sxdmask.npy -c config.json
 ```
 
 This command will output 3 files for every input CIF.
