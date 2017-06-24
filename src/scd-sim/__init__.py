@@ -2,8 +2,10 @@ import os
 import sys
 import argparse
 import logging
+import numpy as np
 
 import simulate
+from simulation_builder import SimulationBuilder
 
 FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -32,14 +34,7 @@ def check_is_directory(directory):
     return os.path.exists(directory) and os.path.isdir(directory)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input-files', type=str, nargs='+')
-    parser.add_argument('-o', '--output-dir', type=str)
-    parser.add_argument('-p', '--prefix', type=str, default='SXD')
-
-    args = parser.parse_args()
-
+def make_data(args):
     if not check_files_exist(args.input_files):
         sys.exit(1)
 
@@ -47,21 +42,48 @@ if __name__ == "__main__":
         logger.error("Cannot find directory called %s" % args.output_dir)
         sys.exit(1)
 
-    params = {
-        "instrument_name": "SXD",
-        "wavelength_range": (.5, 10.),
-        "md_extents": [-17, 17, -7, 17, 0, 33],
-        "mask_binning": 'SXD23767.raw',
-        "mask_workspace":  "mask",
-        "nbins": 300,
-        "temperature": 50,
-        "background_alpha": 0.3e-3,
-        "output_directory": args.output_dir,
-        "file_prefix": args.prefix
-    }
+    builder = SimulationBuilder()
+    builder.instrument_name = "SXD"
+    builder.wavelength_range = (.5, 10.)
+    builder.extents = [-17, 17, -7, 17, 0, 33]
+    builder.nbins = 300
+    builder.temperature = 50.
+    builder.background_alpha = 0.3e-3
 
-    simulate.create_simulated_data(params, args.input_files)    
+    # make a mask for the instrument, only need to do this once
+    mask_data = np.load(args.mask) 
+    mask_data = mask_data.reshape([builder.nbins]*3)
+    simulate.create_simulated_data(builder, args.input_files, mask_data, 
+                                   args.prefix, args.output_dir)    
 
 
-    
+def make_mask(args):
+    extents = [-17, 17, -7, 17, 0, 33]
+    simulate.create_mask_workspace(args.instrument_file, args.output_file, 
+                                   args.nbins, extents)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='command')
+
+    create_parser = subparsers.add_parser('create')
+    create_parser.add_argument('-i', '--input-files', nargs='+', type=str)
+    create_parser.add_argument('-o', '--output-dir', type=str)
+    create_parser.add_argument('-p', '--prefix', type=str, default='SXD')
+    create_parser.add_argument('-m', '--mask', type=str)
+
+    mask_parser = subparsers.add_parser('mask')
+    mask_parser.add_argument('-t', '--instrument-file', type=str)
+    mask_parser.add_argument('-i', '--input-file', type=str)
+    mask_parser.add_argument('-o', '--output-file', type=str)
+    mask_parser.add_argument('-n', '--nbins', type=int, default=300)
+
+    args = parser.parse_args()
+
+    if args.command == "create":
+        make_data(args)
+    else:
+        make_mask(args)
+
 
