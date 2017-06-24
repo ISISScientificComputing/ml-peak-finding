@@ -3,7 +3,7 @@ Generating SCD Data
 
 We need to be able to create data that looks as close as possible to real single
 crystal diffraction data. Ideally we want to be able to generate data from a
-variety of different samples and in a vareity of different orientations.
+variety of different samples and in a variety of different orientations.
 
 A tool, `scd-sim`, has been created that allows the user to generate diffraction
 data from a CIF using the Mantid framework.
