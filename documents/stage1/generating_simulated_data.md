@@ -35,7 +35,7 @@ these are not visible in the generated data.
 Running the Tool
 ================
 
-The general syntax for running the `scd-sim` module can be is as follows:
+The general syntax for running the `scd-sim` module is as follows:
 
 ```bash
 python scd-sim <command> <options>
