@@ -38,9 +38,9 @@ def create_simulated_data(builder, cif_files, mask, file_prefix,
         file_prefix = "{0}_{1}".format(file_prefix, i)
         file_prefix = os.path.join(output_directory, file_prefix)
 
-        api.SaveMD(ws, file_prefix+"_MD.nxs")
-        api.SaveNexus(peaks, file_prefix+"_peaks.nxs")
-        api.SaveIsawUB(peaks, file_prefix + "_UB.mat")
+        api.SaveMD(ws, os.path.abspath(file_prefix+"_MD.nxs"))
+        api.SaveNexus(peaks, os.path.abspath(file_prefix+"_peaks.nxs"))
+        api.SaveIsawUB(peaks, os.path.abspath(file_prefix + "_UB.mat"))
         
         api.DeleteWorkspace(peaks)
         api.DeleteWorkspace(ws)
